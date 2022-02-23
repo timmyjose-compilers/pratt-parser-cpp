@@ -5,11 +5,12 @@
 #endif
 
 #include "token.h"
+#include "visitor.h"
 #include <iostream>
 #include <memory>
 #include <string>
 
-struct expression_t {
+struct expression_t : visitor_element_t {
   virtual ~expression_t() {}
   virtual void show(std::ostream &) const = 0;
 
@@ -25,6 +26,10 @@ struct number_t : expression_t {
   number_t(int val) : val(val) {}
 
   void show(std::ostream &os) const override { os << this->val; }
+
+  double accept(visitor_t &visitor) const override {
+    return visitor.visit(this);
+  }
 };
 
 struct unary_expr_t : expression_t {
@@ -36,6 +41,10 @@ struct unary_expr_t : expression_t {
 
   void show(std::ostream &os) const override {
     os << "(" << token_kind_to_str(this->op) << " " << *this->expr << ")";
+  }
+
+  double accept(visitor_t &visitor) const override {
+    return visitor.visit(this);
   }
 };
 
@@ -51,5 +60,9 @@ struct binary_expr_t : expression_t {
   void show(std::ostream &os) const override {
     os << "(" << *this->left << " " << token_kind_to_str(this->op) << " "
        << *this->right << ")";
+  }
+
+  double accept(visitor_t &visitor) const override {
+    return visitor.visit(this);
   }
 };

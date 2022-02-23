@@ -1,4 +1,5 @@
 #include "../include/ast.h"
+#include "../include/evaluator.h"
 #include "../include/parser.h"
 #include "../include/scanner.h"
 #include "../include/token.h"
@@ -11,9 +12,8 @@ int main() {
   std::string input;
   std::getline(std::cin, input);
 
-  parser_t parser{scanner_t{input}};
-  std::unique_ptr<expression_t> expr = parser.parse();
-  std::cout << *expr << std::endl;
+  evaluator_t evaluator{parser_t{scanner_t{input}}};
+  std::cout << evaluator.evaluate() << std::endl;
 
   return 0;
 }
