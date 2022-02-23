@@ -71,6 +71,10 @@ token_kind_t scanner_t::scan_token() {
     eat_it();
     return MOD;
 
+  case '^':
+    eat_it();
+    return POW;
+
   case '(':
     eat_it();
     return LPAREN;

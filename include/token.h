@@ -4,6 +4,7 @@
 #define TOKEN_H "token.h"
 #endif
 
+#include <iostream>
 #include <string>
 
 typedef enum {
@@ -12,6 +13,7 @@ typedef enum {
   MUL,
   DIV,
   MOD,
+  POW,
   LPAREN,
   RPAREN,
   NUMBER,
@@ -34,5 +36,10 @@ public:
   ~token_t() {}
 
   token_kind_t tok_kind();
-  const std::string &tok_spelling();
+  std::string &tok_spelling();
+
+  friend std::ostream &operator<<(std::ostream &os, const token_t &tok) {
+    return os << "<" << token_kind_to_str(tok.kind) << ";" << tok.spelling
+              << ">" << std::endl;
+  }
 };

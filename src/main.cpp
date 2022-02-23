@@ -3,6 +3,7 @@
 #include "../include/scanner.h"
 #include "../include/token.h"
 #include <iostream>
+#include <memory>
 
 int main() {
   std::cout << "Pratt parsing demo for arithmetic expressions\n";
@@ -10,17 +11,9 @@ int main() {
   std::string input;
   std::getline(std::cin, input);
 
-  scanner_t scanner(input);
-  // token_t tok;
-  // do {
-  //   tok = scanner.scan();
-  //   std::cout << "<kind: " << token_kind_to_str(tok.tok_kind())
-  //             << ", spelling : " << tok.tok_spelling() << ">" << std::endl;
-  // } while (tok.tok_kind() != EOI);
-
-  parser_t parser(scanner);
-  expression_t expr = parser.parse();
-  // std::cout << expr << std::endl;
+  parser_t parser{scanner_t{input}};
+  std::unique_ptr<expression_t> expr = parser.parse();
+  std::cout << *expr << std::endl;
 
   return 0;
 }
