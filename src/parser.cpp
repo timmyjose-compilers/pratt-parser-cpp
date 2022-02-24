@@ -10,23 +10,20 @@ const int HIGHEST_PRECEDENCE = 40;
 std::unique_ptr<expression_t> parser_t::nud(token_t tok) {
   switch (tok.tok_kind()) {
   case LPAREN: {
-    curr_tok = scanner.scan();
     std::unique_ptr<expression_t> expr = parse_expression();
     if (curr_tok.tok_kind() != RPAREN) {
       std::cerr << "Missing right parenthesis" << std::endl;
       std::exit(1);
     }
+    curr_tok = scanner.scan();
     return expr;
   }
   case NUMBER:
     return std::make_unique<number_t>(std::stoi(tok.tok_spelling()));
   case PLUS:
-  case MINUS: {
-    token_t tok = curr_tok;
-    curr_tok = scanner.scan();
+  case MINUS:
     return std::make_unique<unary_expr_t>(tok.tok_kind(),
                                           parse_expression(HIGHEST_PRECEDENCE));
-  }
   default:
     throw "nud is not applicable for this token";
   }
@@ -68,8 +65,9 @@ bool is_right_associative(token_kind_t kind) {
 }
 
 std::unique_ptr<expression_t> parser_t::parse_expression(int rbp) {
-  std::unique_ptr<expression_t> left = nud(curr_tok);
+  token_t tok = curr_tok;
   curr_tok = scanner.scan();
+  std::unique_ptr<expression_t> left = nud(tok);
 
   while (rbp < lbp(curr_tok.tok_kind())) {
     token_kind_t kind = curr_tok.tok_kind();
